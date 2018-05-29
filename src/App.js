@@ -1,26 +1,20 @@
 import React, { Component } from 'react';
 import './App.css';
-import axios from 'axios'
-import {Button,Input,Paper,Grid,Typography} from '@material-ui/core'
-import $ from 'jquery';
-import ObjectsToCsv from 'objects-to-csv'
-
-import stringify from 'csv-stringify'
-//import JSON from 'react-stringify'
-
+import {Button,Input,Paper,Grid,Typography, 
+  TextField,Snackbar,IconButton} from '@material-ui/core'
+import {Image} from 'react-bootstrap'
+import MaskedInput from 'react-input-mask'
 
 class App extends Component {
 
   state = {
+    snackbar: false,
     persons: [],
-
     register: {
-
       fname: '',
       lname: '',
       cno: '',
       eadd: ''
-
     }
   }
 
@@ -33,67 +27,28 @@ class App extends Component {
     })
   }
 
+  handleClose = event => {
+    this.setState({snackbar:false})
+  }
   handleSubmit = event => {
     event.preventDefault();
-
     const {register: {fname,lname,cno,eadd}} = this.state
-
-    const credetials = {
-      fname: this.state.register.fname,
-      lname: this.state.register.lname,
-      cno: this.state.register.cno,
-      eadd: this.state.register.eadd
-    }
-
-    // console.log(JSON.stringify(credetials))
-
-    // let csv = stringify([credetials])
-
-    // console.log(csv)
-
-    const script_url = "https://script.google.com/macros/s/AKfycbyzo9LDSsxHigtXRnt25ecb1kJJ6Z9ecNlBnER7fP3xlynyX_0/exec";
-  
-    let axiosConfig = {
-      headers: {
-          'Content-Type': 'application/jsonp',
-          "Access-Control-Allow-Origin": "*",
-      }
-    }
-
-    // const url = script_url+"?callback=ctrlq&fname="+fname+"&lname="+lname+"&cno="+cno+"&eadd="+eadd+"&action=insert";
-    const url = 
-     `${script_url}?callback=ctrlq&fname=${fname}&lname=${lname}&cno=${cno}&eadd=${eadd}&action=insert`
-
-    // let csv = new ObjectsToCsv(credetials)
-
-  console.log(url)
-
-    // let csvContent = "data:text/csv;charset=utf-8,";
-    //   credetials.forEach(function(rowArray){
-    //     let row = rowArray.join(",");
-    //     csvContent += row + "\r\n";
-    //   }); 
-
-      //  let encodedUri = encodeURI(csv);
-
-      //  console.log(encodedUri);
-      //  window.open(encodedUri);
-
-    axios.post(url)
-
-    // this.componentDidMount() {
-    //   $.ajax({
-    //     crossDomain: true,
-    //     url: url ,
-    //     method: "GET",
-    //     dataType: "jsonp"
-    //   });
-    // }
+    const url = "https://cnrbwzrs79.execute-api.ap-southeast-1.amazonaws.com/prod";
     
+    fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        fname,
+        lname,
+        cno,
+        eadd
+      })
+    }).then( data =>{
+      this.setState({snackbar:true})
+    })
 
     this.setState({
       register: {
-
         fname: '',
         lname: '',
         cno: '',
@@ -108,25 +63,22 @@ class App extends Component {
     const {register:{fname,lname,cno,eadd}} = this.state
 
     return (
-      <div className="App">
-        <Grid container spacing={24}>
-          <Grid item sm>
-          </Grid>
+        <Grid container className="bg" spacing={24}>
+          <Image className="branding" width="30%" src="./images/pdax-brand-identity.png" />
+
           <Grid item xs>
             <Paper className="mainGrid paperContainer">
-
               <form>
-                <Grid container spacing={16}>
-                  <Typography className="header" variant="headline" component="h3">
+                <Typography  align="center" className="header" variant="headline" component="h1">
                     Register
-                  </Typography>
-                </Grid> 
-                
-                <Grid container spacing={16}>
+                </Typography>
+
+                <Grid className="row" container spacing={16}>
 
                   <Grid item md={6}>
-                    <Input
-                      placeholder="First Name"
+                    <TextField
+                      label="First Name"
+                      placeholder="Enter First Name"
                       value={fname}
                       onChange={this.handleChange('fname')}
                       id="fname"
@@ -134,8 +86,9 @@ class App extends Component {
                   </Grid>
 
                   <Grid item md={6}>
-                    <Input
-                      placeholder="Last Name"
+                    <TextField
+                      label="Last Name"
+                      placeholder="Enter Last Name"
                       value={lname}
                       onChange={this.handleChange('lname')}
                       id="lname"
@@ -144,10 +97,12 @@ class App extends Component {
 
                 </Grid>
 
-                <Grid container spacing={16}>
+                <Grid className="row" container spacing={16}>
                       <Grid item md={12}>
-                        <Input
-                          placeholder="Contact Number"
+                        <TextField
+                          label="Contact Number"
+                          fullWidth
+                          placeholder="Enter Contact Number"
                           value={cno}
                           onChange={this.handleChange('cno')}
                           id="fname"
@@ -155,10 +110,12 @@ class App extends Component {
                       </Grid>
                 </Grid>
 
-                <Grid container spacing={16}>
+                <Grid className="row" container spacing={16}>
                   <Grid item md={12}>
-                    <Input
-                      placeholder="Email Address"
+                    <TextField
+                      label="Email Address"
+                      fullWidth
+                      placeholder="Enter Email Address"
                       value={eadd}
                       onChange={this.handleChange('eadd')}
                       id="fname"
@@ -166,16 +123,35 @@ class App extends Component {
                   </Grid>
                 </Grid>
               </form>
-
-              <Button onClick={this.handleSubmit} variant="raised" color="primary" id="b1">
-                Button
-              </Button>
+              <Grid container md={12}>
+                <Button className="btn-submit" onClick={this.handleSubmit} variant="raised" color="primary" id="b1">
+                  Submit
+                </Button>
+              </Grid>
             </Paper>
           </Grid>
           <Grid item sm>
           </Grid>
+
+          <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={this.state.snackbar}
+          autoHideDuration={4000}
+          onClose={this.handleClose}
+          ContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">Registration Successful!</span>}
+          action={[
+            <Button key="close" color="secondary" size="small" onClick={this.handleClose}>
+              Close
+            </Button>,
+          ]}
+        />
         </Grid>
-      </div>
     );
   }
 }

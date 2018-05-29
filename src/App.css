@@ -1,17 +1,47 @@
 body {
-  /* background-image: url(./images/pdax-bg.png);
-  width: 100%; */
+  background-color: #F1F5F8;
+  width: 100%;
+}
+
+.bg {
+      min-height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin: 0 !important;
+      overflow: auto;
+      background-image: url(./images/pdax-bg.png);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+}
+
+.row {
+  padding-bottom: 15px;
+}
+
+.header{
+  color: #325AD7 !important;
+  padding-bottom: 30px;
 }
 
 .paperContainer{
   padding: 50px;
 }
 
-.mainGrid{
-  margin-top: 200px;
+.branding{
+  margin-top: 25px;
+  margin-bottom: 25px;
 }
 
-.header {
+.btn-submit {
+  width: 100%;
 }
 
 table, th, td 
